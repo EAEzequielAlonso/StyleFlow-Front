@@ -1,86 +1,103 @@
-"use client"; // IMPORTANTE para habilitar el useRouter en Next.js
+"use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // Para la navegación en Next.js 13+
-import Image from "next/image";
+import { useRouter } from "next/navigation"; // App Router usa "next/navigation"
+import { setCookie } from "cookies-next"; // Para manejar cookies
+import { signIn } from "next-auth/react"; // Para iniciar sesión con Google
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter(); // Esto ahora funcionará correctamente
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError("Por favor, complete todos los campos.");
-    } else {
-      setError(null);
-      router.push("/dashboard"); // Redirige al dashboard tras el login
+    setError(null);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
+
+      const data = await res.json();
+      setCookie("token", data.token, { maxAge: 60 * 60 * 24 }); // 1 día
+      router.push("/dashboard"); // Redirige después del login
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  // Manejo del inicio de sesión con Google
+  const handleGoogleLogin = async () => {
+    try {
+      const res = await signIn("google", { redirect: false });
+      if (res?.ok) {
+        router.push("/dashboard"); // Redirige al dashboard si el login es exitoso
+      } else {
+        setError("Error al iniciar sesión con Google.");
+      }
+    } catch (err: any) {
+      setError("Error al iniciar sesión con Google.");
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96">
-        <h2 className="text-2xl font-semibold text-center mb-4">Iniciar sesión</h2>
+        <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">Iniciar sesión</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Correo electrónico
-            </label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Correo electrónico</label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 p-3 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
               placeholder="tu@correo.com"
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Contraseña
-            </label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Contraseña</label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 p-3 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
               placeholder="******"
             />
           </div>
-
-          <div className="flex items-center justify-between mb-4">
-            <a href="#" className="text-sm text-blue-500 hover:underline">¿Olvidaste tu contraseña?</a>
-            <a href="/register" className="text-sm text-blue-500 hover:underline">Crear cuenta</a>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition"
-          >
+          <button type="submit" className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition duration-300">
             Iniciar sesión
           </button>
-
-          <div className="flex items-center my-4">
-            <div className="border-t w-full mr-2"></div>
-            <span className="text-gray-500">o</span>
-            <div className="border-t w-full ml-2"></div>
-          </div>
-
-          <button
-            type="button"
-            className="w-full flex items-center justify-center bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition"
-          >
-            <Image src="/images/google-logo.png" alt="Google" width={20} height={20} />
-            <span className="ml-2">Iniciar sesión con Google</span>
-          </button>
         </form>
+
+        {/* Botón para iniciar sesión con Google */}
+        <div className="mt-4">
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center bg-red-600 text-white py-3 rounded-md hover:bg-red-700 transition duration-300"
+          >
+            <img src="./images/google-logo.png" alt="Google" width={24} height={24} className="mr-2" />
+            Iniciar sesión con Google
+          </button>
+        </div>
+
+        {/* Enlaces de ayuda */}
+        <div className="mt-6 text-center text-sm text-gray-600">
+          <a href="/auth/forgot-password" className="text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
+          <p className="my-2">¿No tienes cuenta? <a href="/auth/register" className="text-blue-600 hover:underline">Regístrate aquí</a></p>
+        </div>
       </div>
     </div>
   );

@@ -9,8 +9,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
+       // background: "var(--background)",
         foreground: "var(--foreground)",
+        primary: '#0D47A1',       // Azul Oscuro
+        secondary: '#1976D2',     // Azul Medio
+        background: '#F5F5F5',    // Fondo Neutro
+        action: '#FF9800',        // CTA (Naranja Vibrante)
+        emphasis: '#424242',      // Gris Oscuro
+      },
+      fontFamily: {
+        montserrat: ['Montserrat', 'sans-serif'], // Encabezados
+        roboto: ['Roboto', 'sans-serif'],         // Texto del cuerpo
       },
     },
   },

@@ -1,5 +1,9 @@
-// 📌 Archivo: src/app/dashboard/page.tsx
+
 export default function DashboardHome() {
-    return <h1 className="text-2xl font-bold">Bienvenido al Dashboard</h1>;
-  }
-  
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Bienvenido al Dashboard</h1>
+    </div>
+  );
+}
