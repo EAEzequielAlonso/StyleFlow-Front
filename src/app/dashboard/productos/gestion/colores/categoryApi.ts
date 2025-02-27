@@ -1,5 +1,6 @@
+// api.ts
 import { getCookie } from "cookies-next"; // Asegúrate de tener esta librería
-import { Subcategory } from "../../types"; // Ajusta la importación si es necesario
+import { Category } from "./types"; // Ajusta la importación si es necesario
 import { useRouter } from "next/router";
 
 // Función para redirigir al login si no hay token
@@ -8,7 +9,7 @@ const redirectToLogin = () => {
   router.push("/login");
 };
 
-export const fetchGetSubcategories = async (selectedCategoryId: string): Promise<Subcategory[]> => {
+export const fetchGetCategories = async (page:number, limit:number, searchQuery:string, sortField:string, sortOrder:string): Promise<[Category[],number]> => {
   try {
     const token = getCookie("token");
 
@@ -17,7 +18,9 @@ export const fetchGetSubcategories = async (selectedCategoryId: string): Promise
       throw new Error("No token found, please log in.");
     }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subcategory/category/${selectedCategoryId}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category?page=${page}&limit=${limit}&search=${encodeURIComponent(
+        searchQuery
+      )}&sortField=${sortField}&sortOrder=${sortOrder}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -27,17 +30,17 @@ export const fetchGetSubcategories = async (selectedCategoryId: string): Promise
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Error al obtener las subcategorías");
+      throw new Error(errorData.message || "Error al obtener las categorías");
     }
 
-    const data: Subcategory[] = await response.json();
+    const data: Category[] = await response.json();
     return data;
   } catch (error) {
     throw error; // Re-lanzar el error para manejarlo en el componente
   }
 };
 
-export const fetchPutSubcategory = async (id: string, subcategoryName: string) => {
+export const fetchPutCategory = async (id: string, categoryName: string) => {
   const token = getCookie("token");
 
     if (!token) {
@@ -45,14 +48,14 @@ export const fetchPutSubcategory = async (id: string, subcategoryName: string) =
       throw new Error("No token found, please log in.");
     }
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subcategory/${id}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category/${id}`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      subcategory: subcategoryName.trim(),
+      category: categoryName.trim(),
     }),
   });
 
@@ -64,7 +67,7 @@ export const fetchPutSubcategory = async (id: string, subcategoryName: string) =
   return await response.json();
 };
 
-export const fetchPostSubcategory = async (subategoryName: string, selectedCategoryId: string | null) => {
+export const fetchPostCategory = async (categoryName: string) => {
   const token = getCookie("token");
 
   if (!token) {
@@ -72,35 +75,33 @@ export const fetchPostSubcategory = async (subategoryName: string, selectedCateg
     throw new Error("No token found, please log in.");
   }
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subcategory`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      subcategory: subategoryName.trim(),
-      categoryId: selectedCategoryId.trim(),
+      category: categoryName.trim(),
     }),
   });
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.message || "Error al agregar la subcategoría");
+    throw new Error(errorData.message || "Error al agregar la categoría");
   }
 
   return await response.json();
 };
 
-export const fetchDeleteSubcategory = async (id: string) => {
+export const fetchDeleteCategory = async (id: string) => {
   const token = getCookie("token");
-
   if (!token) {
     redirectToLogin(); // Redirige al login si no hay token
     throw new Error("No token found, please log in.");
   }
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subcategory/${id}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,

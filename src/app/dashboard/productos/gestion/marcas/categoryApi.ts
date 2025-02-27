@@ -1,6 +1,6 @@
 // api.ts
 import { getCookie } from "cookies-next"; // Asegúrate de tener esta librería
-import { Category } from "../../types"; // Ajusta la importación si es necesario
+import { Category } from "./types"; // Ajusta la importación si es necesario
 import { useRouter } from "next/router";
 
 // Función para redirigir al login si no hay token
@@ -9,7 +9,7 @@ const redirectToLogin = () => {
   router.push("/login");
 };
 
-export const fetchGetCategories = async (): Promise<Category[]> => {
+export const fetchGetCategories = async (page:number, limit:number, searchQuery:string, sortField:string, sortOrder:string): Promise<[Category[],number]> => {
   try {
     const token = getCookie("token");
 
@@ -18,7 +18,9 @@ export const fetchGetCategories = async (): Promise<Category[]> => {
       throw new Error("No token found, please log in.");
     }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category?page=${page}&limit=${limit}&search=${encodeURIComponent(
+        searchQuery
+      )}&sortField=${sortField}&sortOrder=${sortOrder}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -94,7 +96,6 @@ export const fetchPostCategory = async (categoryName: string) => {
 
 export const fetchDeleteCategory = async (id: string) => {
   const token = getCookie("token");
-
   if (!token) {
     redirectToLogin(); // Redirige al login si no hay token
     throw new Error("No token found, please log in.");
