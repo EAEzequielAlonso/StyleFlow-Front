@@ -1,18 +1,21 @@
 import { CategoryPaginationProp } from "../types";
 
-const CategoryPagination: React.FC<CategoryPaginationProp> = ({page, setPage}) => {
-    return (
-        <div className="mt-4 flex justify-between">
+const CategoryPagination: React.FC<CategoryPaginationProp> = ({totalCat, page, setPage}) => {
+    
+  const limit = 10
+  const totalPage = Math.ceil(totalCat / limit)
+  return (
+        <div className="container-pagination">
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
-            className="px-4 py-2 bg-[#0D47A1] text-white rounded font-montserrat disabled:opacity-50"
           >
             Anterior
           </button>
+          <h2>{page} de {totalPage}</h2>
           <button
+            disabled={page === totalPage}
             onClick={() => setPage(page + 1)}
-            className="px-4 py-2 bg-[#0D47A1] text-white rounded font-montserrat"
           >
             Siguiente
           </button>

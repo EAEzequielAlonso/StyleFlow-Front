@@ -1,60 +1,33 @@
-export interface Subcategory {
+
+export interface Color {
   id: string;
-  subcategory: string;
-  categoryId: string | null;
+  name: string;
 }
 
-export interface Category {
-  id: string;
-  category: string;
-}
-
-export interface CategorySearchProp {
+export interface SearchProp {
   setPage: React.Dispatch<React.SetStateAction<number>>;
   searchQuery: string, 
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export interface CategoryTableProp {
-  selectedCategory: Category | null;
-  setSelectedCategory: React.Dispatch<React.SetStateAction<Category | null>>, 
+export interface TableProp {
+  setTotalCat: React.Dispatch<React.SetStateAction<number>>;
+  selected: Color | null;
+  setSelected: React.Dispatch<React.SetStateAction<Color | null>>, 
   searchQuery: string;
   page: number;
   actionUpdate: boolean;
 }
 
-export interface CategoryPaginationProp {
+export interface PaginationProp {
   setPage: React.Dispatch<React.SetStateAction<number>>;
   page: number;
+  totalCat: number;
 }
 
-export interface CategorySelected {
-  selectedCategory: Category | null;
-  setSelectedCategory: React.Dispatch<React.SetStateAction<Category | null>>;
+export interface Selected {
+  selected: Color | null;
+  setSelected: React.Dispatch<React.SetStateAction<Color | null>>;
   actionUpdate: boolean;
   setActionUpdate?: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-export interface CategoryFormProps {
-    categories: Category[];
-    setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
-  }
-
-export interface CategoryListProps {
-    categories: Category[];
-    setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
-    selectedCategoryId: string | null;
-    setSelectedCategoryId: React.Dispatch<React.SetStateAction<string | null>>;
-  }
-
-  export interface SubcategoryProps {
-    subcategories: Subcategory[];
-    setSubcategories: React.Dispatch<React.SetStateAction<Subcategory[]>>;
-    selectedCategoryId: string | null;
-  }
-
-  export interface SimpleFormProps {
-    name: string;
-    setName: React.Dispatch<React.SetStateAction<string>>;
-    add: () => void;
-  }

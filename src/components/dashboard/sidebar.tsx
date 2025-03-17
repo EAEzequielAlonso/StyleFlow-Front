@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, memo } from "react";
 import Link from "next/link";
-import { FiHome, FiShoppingCart, FiLogOut, FiChevronDown } from "react-icons/fi";
+import { FiShoppingCart, FiLogOut, FiChevronDown } from "react-icons/fi";
 import {
   LuShoppingCart,
   LuShoppingBag,     // Venta Rápida
@@ -24,6 +24,7 @@ import {
 import { IoShirtOutline } from "react-icons/io5";
 import { deleteCookie } from "cookies-next";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 
 interface MenuItemProps {
   href: string;
@@ -149,7 +150,7 @@ const Sidebar: React.FC = () => {
     >
       {/* Botón para abrir/cerrar el sidebar */}
       <button onClick={toggleSidebar} className="mb-6 flex items-center gap-2 text-white">
-        <img src="../../../images/Logo.svg" alt="Logo SaaS" className="h-12" />
+        <Image src="/images/Logo.svg" alt="Logo SaaS" width="50" height="50"/>
         {isOpen && <span className="text-white font-bold text-xl w-10 pl-4">PHYES SOFT</span>}
       </button>
 

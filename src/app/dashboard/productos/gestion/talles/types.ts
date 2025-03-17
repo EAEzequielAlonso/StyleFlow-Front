@@ -1,60 +1,47 @@
-export interface Subcategory {
+
+export interface Talle {
   id: string;
-  subcategory: string;
-  categoryId: string | null;
+  name: string;
+  sizeType: GrupoTalle;
 }
 
-export interface Category {
+export interface GrupoTalle {
   id: string;
-  category: string;
+  name: string;  
 }
 
-export interface CategorySearchProp {
+interface searchData {
+  name: string;
+  optionId: string;
+}
+
+export interface SearchProp {
   setPage: React.Dispatch<React.SetStateAction<number>>;
-  searchQuery: string, 
-  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  searchQuery: searchData, 
+  setSearchQuery: React.Dispatch<React.SetStateAction<searchData>>;
+  options: GrupoTalle[] | null;
 }
 
-export interface CategoryTableProp {
-  selectedCategory: Category | null;
-  setSelectedCategory: React.Dispatch<React.SetStateAction<Category | null>>, 
-  searchQuery: string;
+export interface TableProp {
+  setTotalCat: React.Dispatch<React.SetStateAction<number>>;
+  selected: Talle | null;
+  setSelected: React.Dispatch<React.SetStateAction<Talle | null>>, 
+  searchQuery: searchData;
   page: number;
   actionUpdate: boolean;
 }
 
-export interface CategoryPaginationProp {
+export interface PaginationProp {
   setPage: React.Dispatch<React.SetStateAction<number>>;
   page: number;
+  totalCat: number;
 }
 
-export interface CategorySelected {
-  selectedCategory: Category | null;
-  setSelectedCategory: React.Dispatch<React.SetStateAction<Category | null>>;
+export interface Selected {
+  selected: Talle | null;
+  setSelected: React.Dispatch<React.SetStateAction<Talle | null>>;
   actionUpdate: boolean;
   setActionUpdate?: React.Dispatch<React.SetStateAction<boolean>>;
+  options: GrupoTalle[] | null;
+  setOptions?: React.Dispatch<React.SetStateAction<GrupoTalle[] | null>>;
 }
-
-export interface CategoryFormProps {
-    categories: Category[];
-    setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
-  }
-
-export interface CategoryListProps {
-    categories: Category[];
-    setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
-    selectedCategoryId: string | null;
-    setSelectedCategoryId: React.Dispatch<React.SetStateAction<string | null>>;
-  }
-
-  export interface SubcategoryProps {
-    subcategories: Subcategory[];
-    setSubcategories: React.Dispatch<React.SetStateAction<Subcategory[]>>;
-    selectedCategoryId: string | null;
-  }
-
-  export interface SimpleFormProps {
-    name: string;
-    setName: React.Dispatch<React.SetStateAction<string>>;
-    add: () => void;
-  }

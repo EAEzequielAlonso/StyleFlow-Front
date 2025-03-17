@@ -13,7 +13,10 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
       {href: "/dashboard/productos/gestion/modelos", title: "Modelos"}
     ],
     [
-      {href: "/dashboard/productos/gestion/talles", title: "Talles"},
+      {href: "/dashboard/productos/gestion/grupos-talles", title: "Grupos de Talles"},
+      {href: "/dashboard/productos/gestion/talles", title: "Talles"}
+    ],
+    [
       {href: "/dashboard/productos/gestion/colores", title: "Colores"}
     ]
   ]

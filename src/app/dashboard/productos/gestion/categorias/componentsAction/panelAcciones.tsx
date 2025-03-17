@@ -1,5 +1,5 @@
 import { CategorySelected } from "../types";
-import { fetchDeleteCategory, fetchPostCategory, fetchPutCategory } from "../categoryApi"
+import { fetchDeleteCategory, fetchPostCategory, fetchPutCategory } from "../fetchApi"
 import { FormEvent } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 
@@ -10,7 +10,7 @@ const PanelAcciones: React.FC<CategorySelected> = ({selected, setSelected, actio
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const category = (form.elements.namedItem("category") as HTMLInputElement).value
+    const category = (form.elements.namedItem("name") as HTMLInputElement).value
     try {
       if (selected) 
         {await fetchPutCategory(selected.id, category)
@@ -38,13 +38,11 @@ const PanelAcciones: React.FC<CategorySelected> = ({selected, setSelected, actio
   };
     
     return (
-        <div className="w-1/3 bg-white p-4 rounded shadow">
+        <div className="w-1/3 bg-white p-4 rounded-lg shadow-xl border border-gray-300">
         <div className="flex flex-row justify-between items-center">
-            <h2 className="text-xl font-semibold text-[#1976D2] mb-4 font-montserrat">
-            Panel de Acciones
-            </h2>
+            <h2> Panel de Acciones </h2>
             <button 
-                className="p-3 bg-[#FF9800] text-white shadow-xl hover:bg-orange-600 active:scale-90 rounded font-montserrat"
+                className="btn-icon-orange"
                 onClick= { () => setSelected(null) }>
                 <AiOutlinePlus size={20}/>
             </button>
@@ -53,8 +51,8 @@ const PanelAcciones: React.FC<CategorySelected> = ({selected, setSelected, actio
           <div className="mb-4">
             <label className="block mb-1">Nombre</label>
             <input
-              name="category"
-              defaultValue={selected?.category || ""}
+              name="name"
+              defaultValue={selected?.name || ""}
               type="text"
               required
               className="w-full border border-gray-300 rounded p-2"
@@ -63,15 +61,15 @@ const PanelAcciones: React.FC<CategorySelected> = ({selected, setSelected, actio
           <div className="flex space-x-2 justify-end">
             <button
               type="submit"
-              className="px-4 py-2 bg-[#5fbd20] text-white shadow-xl rounded font-montserrat active:scale-90"
+              className="btn-text-green"
             >
-              {selected ? "Actualizar" : "Guardar"}
+              { selected ? "Actualizar" : "Guardar" }
             </button>
             {selected && (
               <button
                 type="button"
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-500 text-white shadow-xl rounded font-montserrat active:scale-90"
+                className="btn-text-red"
               >
                 Eliminar
               </button>

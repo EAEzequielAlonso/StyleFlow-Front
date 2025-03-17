@@ -1,23 +1,43 @@
-import { CategorySelected } from "../types";
-import { fetchDeleteCategory, fetchPostCategory, fetchPutCategory } from "../categoryApi"
-import { FormEvent } from "react";
+import { Selected } from "../types";
+import { fetchDelete, fetchPost, fetchPut } from "../fetchApi"
+import { FormEvent, useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 
 
-const PanelAcciones: React.FC<CategorySelected> = ({selectedCategory, setSelectedCategory, actionUpdate, setActionUpdate}) => {
-    
+const PanelAcciones: React.FC<Selected> = ({selected, setSelected, actionUpdate, setActionUpdate, options}) => {
+  
+  const [selectedState, setSelectedState] = useState({
+    id: "",
+    name: "",
+    sizeType: { id: "", name: "" },
+  });
+
+  // Sincroniza el estado cuando `selected` cambia
+  useEffect(() => {
+    if (selected) {
+      setSelectedState(selected);
+    } else {
+      limpiaSetSelectedState()
+    }
+  }, [selected]);
+   
+  const limpiaSetSelectedState = () => {
+      setSelectedState({id: "", name: "" ,sizeType: { id: "", name: "" }});
+  }
       // Maneja el envío del formulario (creación o actualización)
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const category = (form.elements.namedItem("category") as HTMLInputElement).value
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value
+    const optionId = (form.elements.namedItem("optionId") as HTMLSelectElement).value
+    
     try {
-      if (selectedCategory) 
-        {await fetchPutCategory(selectedCategory.id, category)
-      } else {await fetchPostCategory(category)}
+      if (selected) 
+        {await fetchPut(selected.id, name, optionId)
+      } else {await fetchPost(name, optionId)}
         // Se actualiza la lista de categorías
         setActionUpdate(!actionUpdate);
-        setSelectedCategory(null);
+        setSelected(null);
         form.reset();
     } catch (error) {
       console.error("Error en el submit del formulario:", error);
@@ -26,52 +46,71 @@ const PanelAcciones: React.FC<CategorySelected> = ({selectedCategory, setSelecte
 
   // Función para eliminar la categoría seleccionada
   const handleDelete = async () => {
-    if (!selectedCategory) return;
+    if (!selected) return;
     try {
-      await fetchDeleteCategory(selectedCategory.id)
+      await fetchDelete(selected.id)
       //NECESITO ACTUALIZAR LA TABLA
       setActionUpdate(!actionUpdate);
-      setSelectedCategory(null);
+      setSelected(null);
     } catch (error) {
       console.error("Error en la eliminación:", error);
     }
   };
     
     return (
-        <div className="w-1/3 bg-white p-4 rounded shadow">
-        <div className="flex flex-row justify-between items-center">
-            <h2 className="text-xl font-semibold text-[#1976D2] mb-4 font-montserrat">
-            Panel de Acciones
-            </h2>
+        <div className="w-1/3 bg-white p-4 rounded-lg shadow-xl border border-gray-300">
+          <div className="flex flex-row justify-between items-center">
+            <h2> Panel de Acciones </h2>
             <button 
-                className="p-3 bg-[#FF9800] text-white shadow-xl hover:bg-orange-600 active:scale-90 rounded font-montserrat"
-                onClick= { () => setSelectedCategory(null) }>
+                className="btn-icon-orange"
+                onClick= { () => { 
+                  setSelected(null) 
+                  } }>
                 <AiOutlinePlus size={20}/>
             </button>
-        </div>
-        <form onSubmit={handleFormSubmit}>
+          </div>
+          <form onSubmit={handleFormSubmit}>
           <div className="mb-4">
             <label className="block mb-1">Nombre</label>
             <input
-              name="category"
-              defaultValue={selectedCategory?.category || ""}
+              name="name"
+              defaultValue={selected?.name || ""}
               type="text"
               required
               className="w-full border border-gray-300 rounded p-2"
             />
           </div>
+          <div className="mb-4">
+            <label className="block mb-1">Grupo de Talles</label>
+            <select
+              name="optionId"
+              value={selectedState?.sizeType.id || ""}
+              onChange={(e) => setSelectedState((prev) => (
+                {...prev, sizeType: {id: e.target.value, name: e.target.selectedOptions[0].text}}
+              ))}
+              required
+              className="w-full border border-gray-300 rounded p-2"
+            >
+              <option value="">Seleccione un Grupo de Talles</option>
+              {options && options.map((dat) => (
+                <option key={dat.id} value={dat.id}>
+                  {dat.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="flex space-x-2 justify-end">
             <button
-              type="submit"
-              className="px-4 py-2 bg-[#5fbd20] text-white shadow-xl rounded font-montserrat active:scale-90"
+              type="submit" 
+              className="btn-text-green"
             >
-              {selectedCategory ? "Actualizar" : "Guardar"}
+              { selected ? "Actualizar" : "Guardar" }
             </button>
-            {selectedCategory && (
+            {selected && (
               <button
                 type="button"
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-500 text-white shadow-xl rounded font-montserrat active:scale-90"
+                className="btn-text-red"
               >
                 Eliminar
               </button>

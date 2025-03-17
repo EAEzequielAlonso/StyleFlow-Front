@@ -1,26 +1,54 @@
-
 "use client";
 
-import { useState } from "react";
-import { Category as Categoria } from "./types";
+import { useEffect, useState } from "react";
+import { Talle, GrupoTalle } from "./types";
 import PanelBusqueda from "./componentsSearch/panelBusqueda";
 import PanelAcciones from "./componentsAction/panelAcciones";
+import { fetchGetOptions } from "./fetchApi";
 
 const CategoriesAdmin = () => {
   // Estado para la categoría seleccionada (para editar o eliminar)
-  const [selectedCategory, setSelectedCategory] = useState<Categoria | null>(null);
+  const [selected, setSelected] = useState<Talle | null>(null);
+
+  // Estado para la categoría seleccionada (para editar o eliminar)
+  const [options, setOptions] = useState<GrupoTalle[] | null>(null);
 
   // Estado para actualizar tabla cuando realizo accion desde PanelAction
   const [actionUpdate, setActionUpdate] = useState<boolean>(false);
+  
+  const dataBusqueda = {
+    selected,
+    setSelected,
+    options,
+    actionUpdate
+  }
+
+  const dataAcciones = {
+    selected,
+    setSelected,
+    options,
+    actionUpdate,
+    setActionUpdate
+  }
+
+  const loadOptions = async () => {
+    const resOptions = await fetchGetOptions();
+    setOptions(resOptions);
+  }
+
+  useEffect ( () => {
+    loadOptions();
+  }, [])
 
   return (
-    <div className="flex gap-4 p-4">
+
+    <div className="flex gap-4">
   
       {/* Panel Derecho: Formulario de Creación / Edición */}
-      <PanelBusqueda selectedCategory={selectedCategory} setSelectedCategory= {setSelectedCategory} actionUpdate={actionUpdate}/>
+      <PanelBusqueda {...dataBusqueda}/>
 
       {/* Panel Derecho: Formulario de Creación / Edición */}
-      <PanelAcciones selectedCategory={selectedCategory} setSelectedCategory= {setSelectedCategory} actionUpdate={actionUpdate} setActionUpdate={setActionUpdate} />
+      <PanelAcciones {...dataAcciones}/>
 
     </div>
   );

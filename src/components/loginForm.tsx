@@ -26,6 +26,9 @@ const LoginForm = () => {
       }
 
       const data = await res.json();
+
+      
+
       setCookie("token", data.token, { maxAge: 60 * 60 * 24 }); // 1 día
       router.push("/dashboard"); // Redirige después del login
     } catch (err: any) {
@@ -42,7 +45,7 @@ const LoginForm = () => {
       } else {
         setError("Error al iniciar sesión con Google.");
       }
-    } catch (err: any) {
+    } catch (e) {
       setError("Error al iniciar sesión con Google.");
     }
   };

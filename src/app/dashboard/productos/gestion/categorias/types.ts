@@ -1,7 +1,7 @@
 
 export interface Category {
   id: string;
-  category: string;
+  name: string;
 }
 
 export interface CategorySearchProp {
@@ -11,6 +11,7 @@ export interface CategorySearchProp {
 }
 
 export interface CategoryTableProp {
+  setTotalCat: React.Dispatch<React.SetStateAction<number>>;
   selected: Category | null;
   setSelected: React.Dispatch<React.SetStateAction<Category | null>>, 
   searchQuery: string;
@@ -21,6 +22,7 @@ export interface CategoryTableProp {
 export interface CategoryPaginationProp {
   setPage: React.Dispatch<React.SetStateAction<number>>;
   page: number;
+  totalCat: number;
 }
 
 export interface CategorySelected {

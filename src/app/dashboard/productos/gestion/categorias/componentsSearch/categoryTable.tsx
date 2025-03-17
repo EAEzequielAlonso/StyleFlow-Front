@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Category, CategoryTableProp } from "../types";
-import { fetchGetCategories } from "../categoryApi";
+import { fetchGetCategories } from "../fetchApi";
 
-const CategoryTable: React.FC<CategoryTableProp>  = ({page, searchQuery, selected, setSelected, actionUpdate}) => {
+const CategoryTable: React.FC<CategoryTableProp>  = ({setTotalCat, page, searchQuery, selected, setSelected, actionUpdate}) => {
 
   // Estado para la ordenación
-  const [sortField, setSortField] = useState("category");
+  const [sortField, setSortField] = useState("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   // Estado para la lista de categorías
   const [categories, setCategories] = useState<Category[]>([]);
@@ -14,6 +14,7 @@ const CategoryTable: React.FC<CategoryTableProp>  = ({page, searchQuery, selecte
   // Cada vez que cambian la página, la búsqueda o el orden, se refresca la data
   const actualizaTabla = async () => {
     const result:[Category[], number] = await fetchGetCategories(page, limit, searchQuery, sortField, sortOrder)
+    setTotalCat(result[1]);
     setCategories(result[0]);
   }
 
@@ -28,20 +29,18 @@ const CategoryTable: React.FC<CategoryTableProp>  = ({page, searchQuery, selecte
     const handleSelectCategory = (cat: Category) => {
       setSelected(cat);
     };
-
+ 
   return (
-        <table className="w-full">
+        <table className="table">
           <thead>
-            <tr className="bg-[#1976D2] text-white">
+            <tr>
               <th
                 onClick={() => {
-                  setSortField("category");
+                  setSortField("name");
                   setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-                }}
-                className="cursor-pointer p-2 shadow-lg"
-              >
+                }}>
                 Nombre
-                {sortField === "category" && <span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>}
+                {sortField === "name" && <span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>}
               </th>
             </tr>
           </thead>
@@ -49,12 +48,10 @@ const CategoryTable: React.FC<CategoryTableProp>  = ({page, searchQuery, selecte
             {categories.map((cat) => (
               <tr
                 key={cat.id}
-                className={`border-b cursor-pointer hover:bg-[#fff3da] ${
-                  selected?.id === cat.id ? "bg-[#fff3da]" : ""
-                }`}
+                className={`${selected?.id === cat.id ? "bg-[#fff3da]" : ""}`}
                 onClick={() => handleSelectCategory(cat)}
               >
-                <td className="p-2">{cat.category}</td>
+                <td>{cat.name}</td>
               </tr>
             ))}
           </tbody>
